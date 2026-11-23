@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
+import { Providers } from "./providers";
 import "./globals.css";
 
 // next/font downloads Inter at build time and self-hosts it, so no runtime
@@ -25,7 +26,9 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" className={`${inter.variable} h-full`}>
-      <body className="min-h-full bg-slate-50 font-sans text-slate-900 antialiased">{children}</body>
+      <body className="min-h-full overflow-x-hidden bg-slate-50 font-sans text-slate-900 antialiased">
+        <Providers>{children}</Providers>
+      </body>
     </html>
   );
 }
