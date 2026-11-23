@@ -17,7 +17,6 @@ export default defineConfig({
   reporter: [["list"]],
   timeout: 60_000,
   expect: { timeout: 10_000 },
-  globalSetup: "./e2e/global-setup.ts",
   globalTeardown: "./e2e/global-teardown.ts",
   use: {
     baseURL: "http://localhost:3000",
@@ -33,13 +32,15 @@ export default defineConfig({
       command: "npm run build && node --env-file=.env dist/server.js",
       cwd: "../backend",
       url: "http://localhost:4000/health",
-      reuseExistingServer: false,
+      // If you already run `npm run dev`, the tests use those servers (they hot-reload the latest code).
+      reuseExistingServer: true,
       timeout: 120_000,
     },
     {
       command: "npx next dev -p 3000",
       url: "http://localhost:3000/login/",
-      reuseExistingServer: false,
+      // If you already run `npm run dev`, the tests use those servers (they hot-reload the latest code).
+      reuseExistingServer: true,
       timeout: 180_000,
     },
   ],

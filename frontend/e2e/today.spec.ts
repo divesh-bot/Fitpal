@@ -1,21 +1,10 @@
 import { expect, test, type Page } from "@playwright/test";
-import { readTestUser } from "./testUser";
+import { signIn as signInAs, withFreshUser, watchForErrors } from "./helpers";
 
-/** Fails the test on any browser console error or 5xx API response. */
-function watchForErrors(page: Page) {
-  const problems: string[] = [];
-  page.on("console", (m) => m.type() === "error" && problems.push(`console: ${m.text()}`));
-  page.on("response", (r) => r.status() >= 500 && problems.push(`HTTP ${r.status()} ${r.url()}`));
-  return problems;
-}
+const readTestUser = withFreshUser();
 
 async function signIn(page: Page) {
-  const user = readTestUser();
-  await page.goto("/login/");
-  await page.getByLabel("Email").fill(user.email);
-  await page.getByLabel("Password").fill(user.password);
-  await page.getByRole("button", { name: "Sign in" }).click();
-  await expect(page).toHaveURL(/\/today\/$/);
+  await signInAs(page, readTestUser());
   await expect(page.getByRole("heading", { name: "Daily Nutrition" })).toBeVisible();
 }
 

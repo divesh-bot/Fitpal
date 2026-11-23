@@ -2,7 +2,18 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { api } from "./api";
-import type { DaySummary, Food, Habit, Plan, Preferences, Recipe, RecipeCategory, Targets } from "@/types/api";
+import type {
+  DaySummary,
+  Food,
+  Habit,
+  Plan,
+  Preferences,
+  Profile,
+  Recipe,
+  RecipeCategory,
+  Targets,
+  WeightProgress,
+} from "@/types/api";
 
 /**
  * Query keys in one place, so screens can refresh exactly what changed after
@@ -80,5 +91,19 @@ export function useHabits(includeInactive = false) {
     queryKey: [...qk.habits, includeInactive],
     queryFn: ({ signal }) =>
       api<Habit[]>("GET", `/habits${includeInactive ? "?includeInactive=true" : ""}`, undefined, signal),
+  });
+}
+
+export function useProfile() {
+  return useQuery({
+    queryKey: qk.profile,
+    queryFn: ({ signal }) => api<Profile>("GET", "/profile", undefined, signal),
+  });
+}
+
+export function useWeightProgress(from: string, to: string) {
+  return useQuery({
+    queryKey: qk.weight(from, to),
+    queryFn: ({ signal }) => api<WeightProgress>("GET", `/progress/weight?from=${from}&to=${to}`, undefined, signal),
   });
 }

@@ -1,27 +1,31 @@
 import { createClient } from "@supabase/supabase-js";
 import { randomBytes } from "node:crypto";
-import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 
-/** Temporary test-user credentials, kept in a git-ignored file for the duration of a run. */
-const DIR = "e2e/.auth";
-const FILE = `${DIR}/user.json`;
-
+/**
+ * Temporary test users for end-to-end tests. Each spec file gets its own fresh
+ * user (so tests never depend on each other's data), deleted when the file
+ * finishes. Global teardown also sweeps any leftovers from interrupted runs.
+ * Credentials live only in memory.
+ */
 export interface TestUser {
   id: string;
   email: string;
   password: string;
 }
 
-function admin() {
+export const TEST_EMAIL_PREFIX = "fitpal-e2e-ui-";
+
+export function admin() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const secret = process.env.SUPABASE_SECRET_KEY;
-  if (!url || !secret)
+  if (!url || !secret) {
     throw new Error("E2E tests need NEXT_PUBLIC_SUPABASE_URL (.env.local) and SUPABASE_SECRET_KEY (environment).");
+  }
   return createClient(url, secret, { auth: { persistSession: false, autoRefreshToken: false } });
 }
 
 export async function createTestUser(): Promise<TestUser> {
-  const email = `fitpal-e2e-ui-${randomBytes(4).toString("hex")}@example.com`;
+  const email = `${TEST_EMAIL_PREFIX}${randomBytes(4).toString("hex")}@example.com`;
   const password = `${randomBytes(18).toString("base64url")}a1`;
   const { data, error } = await admin().auth.admin.createUser({
     email,
@@ -30,21 +34,28 @@ export async function createTestUser(): Promise<TestUser> {
     user_metadata: { display_name: "E2E UI" },
   });
   if (error) throw new Error(`Could not create test user: ${error.message}`);
-  const user = { id: data.user.id, email, password };
-  mkdirSync(DIR, { recursive: true });
-  writeFileSync(FILE, JSON.stringify(user));
-  return user;
+  return { id: data.user.id, email, password };
 }
 
-export function readTestUser(): TestUser {
-  return JSON.parse(readFileSync(FILE, "utf8")) as TestUser;
-}
-
-export async function deleteTestUser() {
-  if (!existsSync(FILE)) return;
-  const { id } = readTestUser();
+export async function deleteTestUser(id: string) {
   const { error } = await admin().auth.admin.deleteUser(id);
-  rmSync(DIR, { recursive: true, force: true });
   if (error) throw new Error(`Could not delete test user ${id}: ${error.message}`);
-  console.log(`E2E: test user ${id.slice(0, 8)}… deleted`);
+}
+
+/** Deletes every user whose email has the test prefix (safety net). Returns how many. */
+export async function sweepTestUsers(): Promise<number> {
+  const a = admin();
+  let removed = 0;
+  for (let page = 1; page <= 10; page++) {
+    const { data, error } = await a.auth.admin.listUsers({ page, perPage: 200 });
+    if (error) throw new Error(`Could not list users: ${error.message}`);
+    for (const u of data.users) {
+      if (u.email?.startsWith(TEST_EMAIL_PREFIX)) {
+        await deleteTestUser(u.id);
+        removed++;
+      }
+    }
+    if (data.users.length < 200) break;
+  }
+  return removed;
 }
