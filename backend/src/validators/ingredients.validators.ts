@@ -14,9 +14,15 @@ const fromFood = z
   })
   .strict();
 
-/** A manually entered ingredient with its own nutrition values. */
+/**
+ * An ingredient with explicit nutrition values: either typed in manually, or an
+ * existing line being kept as-is. `linkedFoodItemId` preserves an existing
+ * line's link to a food WITHOUT recalculating it, so re-saving a meal never
+ * silently changes stored values (e.g. the plan's 35 kcal tomato base).
+ */
 const manual = z
   .object({
+    linkedFoodItemId: uuid.optional(),
     name: z.string().trim().min(1).max(120),
     qtyLabel: z.string().trim().max(40).optional(),
     quantity: z.number().min(0).max(100_000).nullable().optional(),
@@ -31,6 +37,6 @@ const manual = z
 
 export const ingredientInputSchema = z.union([fromFood, manual]);
 export type IngredientInput = z.output<typeof ingredientInputSchema>;
-export const isFromFood = (i: IngredientInput): i is z.output<typeof fromFood> => "foodItemId" in i;
+export const isFromFood = (i: IngredientInput): i is z.output<typeof fromFood> => "foodItemId" in i && "amount" in i;
 
 export const ingredientListSchema = z.array(ingredientInputSchema).max(60);

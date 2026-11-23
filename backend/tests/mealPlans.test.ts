@@ -296,3 +296,45 @@ describe("parseQtyLabel", () => {
     expect(parseQtyLabel(label)).toEqual(expected);
   });
 });
+
+describe("re-saving a meal never silently changes stored values", () => {
+  it("kept lines keep their values and food link; only changed amounts are recalculated", async () => {
+    const tomato = store.seedSharedFood({ name: "Tomato / Onion / Spices base", kcal: 33, protein_g: 0.8 }).id;
+    // A stored plan line whose written value (35 kcal) differs from the food DB (33 kcal for 100 g).
+    const kept = {
+      linkedFoodItemId: tomato,
+      name: "Tomato/onion/spices",
+      qtyLabel: "100 g",
+      quantity: 100,
+      unit: "g",
+      kcal: 35,
+      proteinG: 0.8,
+    };
+    const res = await api(alice).put(`${P}/days/1/meals/dinner`, {
+      title: "Renamed dinner",
+      ingredients: [kept, { foodItemId: paneer, amount: 100 }],
+    });
+    expect(res.status).toBe(200);
+    const dinner = res.body.data.days[0].meals.find((m: { slot: string }) => m.slot === "dinner");
+    expect(dinner.ingredients[0]).toMatchObject({ name: "Tomato/onion/spices", kcal: 35, foodItemId: tomato });
+    expect(dinner.ingredients[1]).toMatchObject({ kcal: 140, foodItemId: paneer });
+  });
+
+  it("a kept line linked to an egg food is still egg (cannot slip onto Tuesday)", async () => {
+    const res = await api(alice).put(`${P}/days/2/meals/dinner`, {
+      title: "Sneaky",
+      ingredients: [{ linkedFoodItemId: egg, name: "Protein scramble", kcal: 144, proteinG: 12.6, dietType: "veg" }],
+    });
+    expect(res.status).toBe(422);
+    expect(res.body.error.code).toBe("STRICT_VEG_VIOLATION");
+  });
+
+  it("a kept line linked to an unknown food is rejected", async () => {
+    const res = await api(alice).put(`${P}/days/1/meals/dinner`, {
+      title: "x",
+      ingredients: [{ linkedFoodItemId: "99999999-9999-4999-8999-999999999999", name: "x", kcal: 1, proteinG: 1 }],
+    });
+    expect(res.status).toBe(422);
+    expect(res.body.error.code).toBe("INVALID_REFERENCE");
+  });
+});

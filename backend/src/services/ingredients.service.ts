@@ -117,7 +117,9 @@ export async function resolveIngredients(
   foodsRepo: FoodsRepository,
   rules: DietRules,
 ): Promise<IngredientLine[]> {
-  const ids = inputs.filter(isFromFood).map((i) => i.foodItemId);
+  const ids = inputs
+    .map((i) => (isFromFood(i) ? i.foodItemId : i.linkedFoodItemId))
+    .filter((id): id is string => id !== undefined);
   const foods = new Map<string, FoodRow>((await foodsRepo.getMany(ids)).map((f) => [f.id, f]));
 
   return inputs.map((input) => {
@@ -146,8 +148,19 @@ export async function resolveIngredients(
       };
     }
     assertAllowed(input.name, rules);
+    // Kept line: values exactly as given, link preserved (food must still be visible).
+    let linkedFood: FoodRow | undefined;
+    if (input.linkedFoodItemId) {
+      linkedFood = foods.get(input.linkedFoodItemId);
+      if (!linkedFood)
+        throw new AppError(422, "INVALID_REFERENCE", "A linked food does not exist or is not available.");
+      assertAllowed(linkedFood.name, rules);
+    }
+    const stated = linkedFood
+      ? strictestDiet([input.dietType ?? "veg", linkedFood.diet_type as DietType])
+      : input.dietType;
     return {
-      food_item_id: null,
+      food_item_id: linkedFood?.id ?? null,
       name: input.name,
       quantity: input.quantity ?? null,
       unit: input.unit ?? null,
@@ -156,7 +169,7 @@ export async function resolveIngredients(
       protein_g: input.proteinG,
       carbs_g: input.carbsG ?? null,
       fat_g: input.fatG ?? null,
-      diet_type: effectiveDietType(input.name, input.dietType),
+      diet_type: effectiveDietType(input.name, stated),
     };
   });
 }

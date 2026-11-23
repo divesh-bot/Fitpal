@@ -14,4 +14,12 @@ export default tseslint.config(
       "no-console": "error", // use the pino logger instead
     },
   },
+  {
+    // Standalone Node scripts (e.g. live-e2e.mjs) print results to the console.
+    files: ["scripts/**/*.mjs"],
+    languageOptions: {
+      globals: { process: "readonly", console: "readonly", fetch: "readonly", URL: "readonly" },
+    },
+    rules: { "no-console": "off" },
+  },
 );
