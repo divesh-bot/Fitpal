@@ -28,15 +28,16 @@ _Last updated: 2026-11-23_
 | Prettier + ESLint in both apps | ✅ | |
 | Both apps run independently and together | ✅ 🧪 | Verified with curl against running servers |
 
-## Phase 2: Database 🟨 (built and tested locally; not yet applied to Supabase)
+## Phase 2: Database ✅ 🧪 🚀 (applied to Supabase 2026-11-23)
 
 | Item | Status | Notes |
 |---|---|---|
 | Supabase project created (Tokyo, ap-northeast-1; Postgres 17) | ✅ | Email auth on with confirmation; ES256 JWT signing keys (verified via the JWKS endpoint) |
 | Migrations 0001–0004 (tables, rules, RLS, account setup) | ✅ 🧪 | 30 tests in PGlite; mutation-checked that the tests catch an RLS leak |
 | Seed generated from the prototype (42 foods, 7-day plan, 5 snacks, 16 groceries) | ✅ 🧪 | Values exact; see `database/seed/SEED_REPORT.md` |
-| Migration runner (status / apply / tamper check, verified TLS) | ✅ 🧪 | Tested end-to-end against a local PGlite server |
-| Apply to Supabase | ⬜ | **Waiting on the owner:** connection string + CA certificate in `database/.env` (see database/README.md) |
+| Supabase CLI workflow (`npm run db:push:dry` / `db:push`, migrations synced from `database/migrations`) | ✅ | Primary way to apply migrations |
+| Fallback migration runner (connection string, verified TLS) | ✅ 🧪 | Tested against a local PGlite server; not needed while the CLI is used |
+| Apply to Supabase | ✅ 🚀 | 4 migrations + seed applied. Verified live: 20 tables, all with RLS; 42 foods; 4 templates; sign-up trigger present; 0 anon grants; anonymous REST calls to tables and RPCs refused (401); `supabase db advisors`: no issues |
 | Supabase Auth URL configuration | ⬜ | Owner sets Site URL and redirect URLs in the dashboard |
 
 ## Phase 3: Backend modules ⬜

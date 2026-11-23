@@ -19,11 +19,28 @@ cd database
 npm install
 npm test                    # run all schema/RLS tests locally
 npm run seed:build          # regenerate seed SQL from the prototype
-npm run migrate             # show what is applied / pending (changes nothing)
-npm run migrate -- --apply  # apply pending migrations and seeds
 ```
 
-## One-time setup to apply migrations to Supabase
+## Applying migrations to Supabase (Supabase CLI, the primary method)
+
+One-time setup: run `npx.cmd supabase@3.2.0 login` in a real terminal (it opens the browser), then `npm run db:link`.
+
+```bash
+npm run db:push:dry   # show what would be applied (changes nothing)
+npm run db:push       # apply pending migrations + seed (asks for confirmation)
+npm run db:advisors   # Supabase security/performance checks
+```
+
+The CLI reads `database/supabase/migrations/`, which is a **generated, git-ignored copy** of `database/migrations/` (the `db:*` scripts refresh it automatically). Always edit `database/migrations/`.
+
+## Fallback: connection-string runner (only if the CLI can't be used)
+
+```bash
+npm run migrate             # status (changes nothing)
+npm run migrate -- --apply  # apply
+```
+
+Setup for the fallback:
 
 1. **Connection string:** in the Supabase Dashboard, click **Connect** (top bar) and open the **Session pooler** tab. Copy the URI.
 2. **CA certificate:** go to Dashboard → **Database → Settings → SSL Configuration** and click **Download certificate**. Save it as `database/certs/supabase-ca.crt`.
