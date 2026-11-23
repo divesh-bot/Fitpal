@@ -96,7 +96,7 @@ export interface DietRules {
   wholeEggsOnly: boolean;
 }
 
-function assertAllowed(name: string, rules: DietRules) {
+export function assertAllowed(name: string, rules: DietRules) {
   if (matchesExclusion(name, rules.excludedFoods)) {
     throw new AppError(422, "EXCLUDED_FOOD", `"${name}" is on your excluded foods list.`);
   }

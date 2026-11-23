@@ -11,6 +11,8 @@ import type { RepositoriesFactory } from "../../src/repositories/index.js";
 import type { FoodRow, FoodSearch, FoodsRepository, FoodWrite } from "../../src/repositories/foods.repository.js";
 import type { RecipeWithIngredients } from "../../src/repositories/recipes.repository.js";
 import { FakeRecipesRepository } from "./recipes.js";
+import { FakeMealPlansRepository } from "./mealPlans.js";
+import type { PlanRow } from "../../src/repositories/mealPlans.repository.js";
 import { AppError } from "../../src/utils/AppError.js";
 
 /** In-memory stand-in for the database, keyed by user id (mirrors RLS scoping). */
@@ -21,6 +23,10 @@ export class FakeStore {
   /** All food rows (shared ones have user_id null), like the food_items table. */
   foods: FoodRow[] = [];
   recipes: RecipeWithIngredients[] = [];
+  /** Active meal plan per user. */
+  plans = new Map<string, PlanRow>();
+  /** What reset_my_meal_plan restores (v1 plan file). */
+  defaultPlan: unknown = { version: 1, name: "Default", days: [] };
 
   /** Adds a shared reference food (as the seed does). */
   seedSharedFood(values: Partial<FoodRow> & Pick<FoodRow, "name">): FoodRow {
@@ -97,6 +103,7 @@ export class FakeStore {
       account: new FakeAccountRepository(this, userId),
       foods: new FakeFoodsRepository(this, userId),
       recipes: new FakeRecipesRepository(this, userId),
+      mealPlans: new FakeMealPlansRepository(this, userId),
     });
   }
 }

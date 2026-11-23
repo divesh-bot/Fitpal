@@ -1,8 +1,4 @@
-import type {
-  RecipeSave,
-  RecipesRepository,
-  RecipeCategory,
-} from "../../src/repositories/recipes.repository.js";
+import type { RecipeSave, RecipesRepository, RecipeCategory } from "../../src/repositories/recipes.repository.js";
 import { AppError } from "../../src/utils/AppError.js";
 import type { FakeStore } from "./accountRepository.js";
 
