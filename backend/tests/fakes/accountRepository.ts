@@ -13,6 +13,8 @@ import type { RecipeWithIngredients } from "../../src/repositories/recipes.repos
 import { FakeRecipesRepository } from "./recipes.js";
 import { FakeMealPlansRepository } from "./mealPlans.js";
 import { FakeCheckinsRepository, FakeHabitsRepository } from "./tracking.js";
+import { FakeFoodEntriesRepository } from "./foodEntries.js";
+import type { FoodEntryRow } from "../../src/repositories/foodEntries.repository.js";
 import type { CheckinRow, HabitLogRow, HabitRow } from "../../src/repositories/tracking.repository.js";
 import type { PlanRow } from "../../src/repositories/mealPlans.repository.js";
 import { AppError } from "../../src/utils/AppError.js";
@@ -30,6 +32,7 @@ export class FakeStore {
   checkins: CheckinRow[] = [];
   habits: HabitRow[] = [];
   habitLogs: HabitLogRow[] = [];
+  foodEntries: FoodEntryRow[] = [];
   /** What reset_my_meal_plan restores (v1 plan file). */
   defaultPlan: unknown = { version: 1, name: "Default", days: [] };
 
@@ -127,6 +130,7 @@ export class FakeStore {
       mealPlans: new FakeMealPlansRepository(this, userId),
       checkins: new FakeCheckinsRepository(this, userId),
       habits: new FakeHabitsRepository(this, userId),
+      foodEntries: new FakeFoodEntriesRepository(this, userId),
     });
   }
 }

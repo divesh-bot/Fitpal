@@ -9,6 +9,7 @@ import {
   type CheckinsRepository,
   type HabitsRepository,
 } from "./tracking.repository.js";
+import { SupabaseFoodEntriesRepository, type FoodEntriesRepository } from "./foodEntries.repository.js";
 
 /** All repositories for one authenticated request, scoped to that user. */
 export interface Repositories {
@@ -18,6 +19,7 @@ export interface Repositories {
   mealPlans: MealPlansRepository;
   checkins: CheckinsRepository;
   habits: HabitsRepository;
+  foodEntries: FoodEntriesRepository;
 }
 
 export type RepositoriesFactory = (auth: { userId: string; accessToken: string }) => Repositories;
@@ -32,6 +34,7 @@ export function createSupabaseRepositories(dbFor: (accessToken: string) => Db): 
       mealPlans: new SupabaseMealPlansRepository(db, userId),
       checkins: new SupabaseCheckinsRepository(db, userId),
       habits: new SupabaseHabitsRepository(db, userId),
+      foodEntries: new SupabaseFoodEntriesRepository(db, userId),
     };
   };
 }

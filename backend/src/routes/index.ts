@@ -7,6 +7,7 @@ import { foodsRouter } from "./foods.routes.js";
 import { recipesRouter } from "./recipes.routes.js";
 import { mealPlansRouter } from "./mealPlans.routes.js";
 import { trackingRouter } from "./tracking.routes.js";
+import { dailyRouter } from "./daily.routes.js";
 
 export interface ApiRouterDeps {
   verifyToken: TokenVerifier;
@@ -26,6 +27,7 @@ export function createApiRouter({ verifyToken, repositories }: ApiRouterDeps): R
   router.use(recipesRouter());
   router.use(mealPlansRouter());
   router.use(trackingRouter());
+  router.use(dailyRouter());
 
   return router;
 }
