@@ -1,0 +1,11 @@
+# Supabase
+.branches
+.temp
+
+# dotenvx
+.env.keys
+.env.local
+.env.*.local
+
+# Generated copy of ../migrations (see scripts/sync-cli-migrations.mjs)
+migrations/

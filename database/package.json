@@ -1,0 +1,25 @@
+{
+  "name": "fitpal-database",
+  "version": "0.1.0",
+  "scripts": {
+    "seed:build": "node scripts/build-seed.mjs",
+    "test": "vitest run",
+    "migrate": "node --env-file-if-exists=.env scripts/migrate.mjs",
+    "db:sync": "node scripts/sync-cli-migrations.mjs",
+    "db:link": "npx --yes supabase@3.2.0 --workdir . link --project-ref tyljvazcwymkkhjdlbft",
+    "db:status": "npm run db:sync && npx --yes supabase@3.2.0 --workdir . migration list --remote",
+    "db:push:dry": "npm run db:sync && npx --yes supabase@3.2.0 --workdir . db push --remote --include-seed --dry-run",
+    "db:push": "npm run db:sync && npx --yes supabase@3.2.0 --workdir . db push --remote --include-seed",
+    "db:advisors": "npx --yes supabase@3.2.0 --workdir . db advisors --remote"
+  },
+  "type": "module",
+  "private": true,
+  "dependencies": {
+    "pg": "^8.23.1"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "^0.5.17",
+    "@electric-sql/pglite-socket": "^0.2.20",
+    "vitest": "^5.1.1"
+  }
+}
