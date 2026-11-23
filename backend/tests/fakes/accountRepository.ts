@@ -14,6 +14,10 @@ import { FakeRecipesRepository } from "./recipes.js";
 import { FakeMealPlansRepository } from "./mealPlans.js";
 import { FakeCheckinsRepository, FakeHabitsRepository } from "./tracking.js";
 import { FakeFoodEntriesRepository } from "./foodEntries.js";
+import { FakeWorkoutsRepository } from "./workouts.js";
+import { FakeGroceryRepository } from "./grocery.js";
+import type { WorkoutRow } from "../../src/repositories/workouts.repository.js";
+import type { GroceryListRow } from "../../src/repositories/grocery.repository.js";
 import type { FoodEntryRow } from "../../src/repositories/foodEntries.repository.js";
 import type { CheckinRow, HabitLogRow, HabitRow } from "../../src/repositories/tracking.repository.js";
 import type { PlanRow } from "../../src/repositories/mealPlans.repository.js";
@@ -33,6 +37,8 @@ export class FakeStore {
   habits: HabitRow[] = [];
   habitLogs: HabitLogRow[] = [];
   foodEntries: FoodEntryRow[] = [];
+  workouts: (WorkoutRow & { user_id: string })[] = [];
+  groceryLists: (GroceryListRow & { user_id: string; is_current: boolean })[] = [];
   /** What reset_my_meal_plan restores (v1 plan file). */
   defaultPlan: unknown = { version: 1, name: "Default", days: [] };
 
@@ -131,6 +137,8 @@ export class FakeStore {
       checkins: new FakeCheckinsRepository(this, userId),
       habits: new FakeHabitsRepository(this, userId),
       foodEntries: new FakeFoodEntriesRepository(this, userId),
+      workouts: new FakeWorkoutsRepository(this, userId),
+      grocery: new FakeGroceryRepository(this, userId),
     });
   }
 }

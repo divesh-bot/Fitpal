@@ -12,7 +12,7 @@ import { setHabitByKey, toCheckinDto, type CheckinDto } from "./tracking.service
 
 type DailyRepos = Pick<
   Repositories,
-  "foodEntries" | "foods" | "recipes" | "mealPlans" | "account" | "habits" | "checkins"
+  "foodEntries" | "foods" | "recipes" | "mealPlans" | "account" | "habits" | "checkins" | "workouts"
 >;
 
 // ---------- DTO ----------
@@ -361,11 +361,12 @@ export async function dailyNutrition(repos: DailyRepos, date: string): Promise<D
 
 /** Everything the Today screen needs for one date in a single request. */
 export async function daySummary(repos: DailyRepos, date: string) {
-  const [nutrition, habits, logs, checkinRow] = await Promise.all([
+  const [nutrition, habits, logs, checkinRow, workouts] = await Promise.all([
     dailyNutrition(repos, date),
     repos.habits.list(false),
     repos.habits.logs(date, date),
     repos.checkins.get(date),
+    repos.workouts.list({ from: date, to: date, limit: 10 }),
   ]);
   const done = new Set(logs.filter((l) => l.completed).map((l) => l.habit_id));
   const checkin: CheckinDto | null = checkinRow ? toCheckinDto(checkinRow) : null;
@@ -374,5 +375,11 @@ export async function daySummary(repos: DailyRepos, date: string) {
     steps: { count: checkin?.steps ?? 0, target: nutrition.target.steps },
     habits: habits.map((h) => ({ id: h.id, key: h.key, name: h.name, done: done.has(h.id) })),
     checkin,
+    workouts: workouts.map((w) => ({
+      id: w.id,
+      split: w.split,
+      durationMin: w.duration_min,
+      exercises: w.workout_exercises.length,
+    })),
   };
 }

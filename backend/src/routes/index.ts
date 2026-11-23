@@ -8,6 +8,8 @@ import { recipesRouter } from "./recipes.routes.js";
 import { mealPlansRouter } from "./mealPlans.routes.js";
 import { trackingRouter } from "./tracking.routes.js";
 import { dailyRouter } from "./daily.routes.js";
+import { workoutsRouter } from "./workouts.routes.js";
+import { groceryRouter } from "./grocery.routes.js";
 
 export interface ApiRouterDeps {
   verifyToken: TokenVerifier;
@@ -28,6 +30,8 @@ export function createApiRouter({ verifyToken, repositories }: ApiRouterDeps): R
   router.use(mealPlansRouter());
   router.use(trackingRouter());
   router.use(dailyRouter());
+  router.use(workoutsRouter());
+  router.use(groceryRouter());
 
   return router;
 }

@@ -10,6 +10,8 @@ import {
   type HabitsRepository,
 } from "./tracking.repository.js";
 import { SupabaseFoodEntriesRepository, type FoodEntriesRepository } from "./foodEntries.repository.js";
+import { SupabaseWorkoutsRepository, type WorkoutsRepository } from "./workouts.repository.js";
+import { SupabaseGroceryRepository, type GroceryRepository } from "./grocery.repository.js";
 
 /** All repositories for one authenticated request, scoped to that user. */
 export interface Repositories {
@@ -20,6 +22,8 @@ export interface Repositories {
   checkins: CheckinsRepository;
   habits: HabitsRepository;
   foodEntries: FoodEntriesRepository;
+  workouts: WorkoutsRepository;
+  grocery: GroceryRepository;
 }
 
 export type RepositoriesFactory = (auth: { userId: string; accessToken: string }) => Repositories;
@@ -35,6 +39,8 @@ export function createSupabaseRepositories(dbFor: (accessToken: string) => Db): 
       checkins: new SupabaseCheckinsRepository(db, userId),
       habits: new SupabaseHabitsRepository(db, userId),
       foodEntries: new SupabaseFoodEntriesRepository(db, userId),
+      workouts: new SupabaseWorkoutsRepository(db, userId),
+      grocery: new SupabaseGroceryRepository(db, userId),
     };
   };
 }
