@@ -67,8 +67,8 @@ _Last updated: 2026-11-23_
 | Foundation: Supabase Auth (PKCE) sign-up / sign-in / sign-out / forgot + reset password / email callback; API client; app shell (sidebar + mobile tabs) | ✅ 🧪 | Confirmation and reset links must be opened in the same browser (PKCE); other devices: email still confirmed, then sign in |
 | Today screen: week selector (real dates), rings, steps, habits, planned-meal ticks, inline meal editor (copy/clear), snacks (pick/edit/add/delete), log food from list or manually, reset checkmarks, veg-day toggle | ✅ 🧪 | Playwright against live Supabase: 6/6 (desktop journey, phone layout, auth redirects, wrong password); screenshots reviewed |
 | Calculator: food lookup with live macros, meal builder (save as recipe / into a plan slot for one or all days / as a snack option; log to today), My Recipes (log, edit, delete), BMR & TDEE with goal presets and protein g/kg, apply targets from today (optionally saving profile) | ✅ 🧪 | Same formulas as the prototype (9 unit tests). Note: the plan text says BMR ~1,901, but Mifflin–St Jeor for 98 kg / 173 cm / 27 y gives 1,931 (TDEE 2,588); stored targets were not changed. Playwright: 8/8 incl. 2 calculator journeys |
-| Log & Progress (check-ins, weight chart, workouts) | ⬜ | next |
-| Grocery | ⬜ | |
+| Log & Progress: daily check-in (weight, waist, steps, sleep, hunger, energy, notes; edit by date), weight chart with 7-day average (30 d / 90 d / 1 y, hover tooltip, keyboard, screen-reader table), pace and waist tiles, check-in history (edit/delete); PPL workout logger with per-set reps/kg/warm-up, last-session hint, exercise autocomplete, history (edit/delete), strength progression chart + table; saving a workout ticks "Workout done" | ✅ 🧪 | Chart colours validated with the dataviz checker (slate-600 vs emerald: contrast ≥ 3:1, CVD ΔE 16.7). Fixed a race where a fast save skipped the workout tick. Playwright: 11/11 |
+| Grocery | ⬜ | next |
 | Plan & Rules (plan management, import/export/reset, profile, targets, preferences) | ⬜ | |
 
 ## Phase 5: Integration and cross-device testing ⬜

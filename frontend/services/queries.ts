@@ -13,6 +13,9 @@ import type {
   RecipeCategory,
   Targets,
   WeightProgress,
+  Checkin,
+  Workout,
+  Progression,
 } from "@/types/api";
 
 /**
@@ -105,5 +108,35 @@ export function useWeightProgress(from: string, to: string) {
   return useQuery({
     queryKey: qk.weight(from, to),
     queryFn: ({ signal }) => api<WeightProgress>("GET", `/progress/weight?from=${from}&to=${to}`, undefined, signal),
+  });
+}
+
+export function useCheckins(from: string, to: string) {
+  return useQuery({
+    queryKey: qk.checkins(from, to),
+    queryFn: ({ signal }) => api<Checkin[]>("GET", `/checkins?from=${from}&to=${to}`, undefined, signal),
+  });
+}
+
+export function useWorkouts(limit = 30) {
+  return useQuery({
+    queryKey: [...qk.workouts, limit],
+    queryFn: ({ signal }) => api<Workout[]>("GET", `/workouts?limit=${limit}`, undefined, signal),
+  });
+}
+
+export function useExerciseNames() {
+  return useQuery({
+    queryKey: qk.exercises,
+    queryFn: ({ signal }) => api<string[]>("GET", "/workouts/exercises", undefined, signal),
+  });
+}
+
+export function useProgression(exercise: string) {
+  return useQuery({
+    queryKey: qk.progression(exercise),
+    queryFn: ({ signal }) =>
+      api<Progression>("GET", `/workouts/progression?exercise=${encodeURIComponent(exercise)}`, undefined, signal),
+    enabled: exercise.trim().length > 0,
   });
 }
