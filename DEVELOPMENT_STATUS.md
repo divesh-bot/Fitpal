@@ -40,7 +40,7 @@ _Last updated: 2026-11-23_
 | Apply to Supabase | ✅ 🚀 | 4 migrations + seed applied. Verified live: 20 tables, all with RLS; 42 foods; 4 templates; sign-up trigger present; 0 anon grants; anonymous REST calls to tables and RPCs refused (401); `supabase db advisors`: no issues |
 | Supabase Auth URL configuration | ✅ 🚀 | Site URL http://localhost:3000; redirect http://localhost:3000/** (pushed via CLI after syncing config.toml with production) |
 
-## Phase 3: Backend modules 🟨
+## Phase 3: Backend modules ✅ 🧪 (code complete; live end-to-end pending)
 
 | Module | Status | Notes |
 |---|---|---|
@@ -50,13 +50,15 @@ _Last updated: 2026-11-23_
 | Nutrition maths (shared calculation functions) | ✅ 🧪 | 13 tests reproduce prototype values (paneer 150 g = 210 kcal, 2 eggs = 144, CD milk 450 ml = 293 kcal / 25 g); unknown carbs/fat never counted as 0 |
 | Foods (search, custom CRUD, shared read-only, tofu flag) | ✅ 🧪 | 19 route tests incl. cross-user 404s and validation; real Supabase queries not yet run with a signed-in user |
 | ⚠️ Live end-to-end with a real user | ⬜ | Needs the Phase 4 sign-up screen (email confirmation is required) |
-| Food entries + daily nutrition | ⬜ | next |
-| Recipes | ⬜ | |
-| Meal plans (edit, copy, veg flag, import/export/reset) | ⬜ | |
-| Check-ins + weight progress | ⬜ | |
-| Habits | ⬜ | |
-| Workouts | ⬜ | |
-| Grocery | ⬜ | |
+| Migration 0005: atomic write functions (recipes, plan meals, copy, snacks, reset day, workouts, grocery) | ✅ 🧪 | 17 PGlite tests; **not yet applied to Supabase** |
+| Recipes + shared ingredient rules (tofu, egg whites, stricter diet type) | ✅ 🧪 | |
+| Meal plans (view, edit, copy, veg flag, import v1 + prototype v2, export, reset) | ✅ 🧪 | |
+| Check-ins + weight progress (calendar 7-day average) | ✅ 🧪 | Deliberate change from the prototype's last-7-entries average |
+| Habits (built-in creatine/workout + custom) | ✅ 🧪 | |
+| Daily log: food entries, planned-meal ticks, snacks, reset day, Today summary | ✅ 🧪 | Idempotent via clientRequestId; nutrition snapshots |
+| Workouts + progression (Epley e1RM, warm-ups excluded) | ✅ 🧪 | |
+| Grocery (generate from plan, custom items carried over) | ✅ 🧪 | Plan quantities are as eaten (cooked rice) |
+| Totals | | 192 backend tests + 47 database tests passing |
 
 ## Phase 4: Frontend screens ⬜
 

@@ -57,7 +57,8 @@ Supabase: PostgreSQL (Row Level Security) + Supabase Auth
 - [x] Rate limiting on the API
 - [x] Log redaction for authorization headers, cookies, passwords and tokens
 - [x] Generic 500 responses (no stack traces)
-- [ ] JWT verification middleware (Phase 3)
-- [ ] Zod validation on every endpoint (Phase 3)
-- [ ] Row Level Security on every user table (Phase 2)
-- [ ] Cross-user access tests (Phase 3/5)
+- [x] JWT verification middleware (ES256 via JWKS; 15 attack-case tests)
+- [x] Zod validation on every endpoint (strict: unknown fields rejected)
+- [x] Row Level Security on every user table (verified live + Supabase advisors)
+- [x] Cross-user access tests (API with test doubles; database in PGlite)
+- [ ] Live end-to-end tests against Supabase with real signed-in users
