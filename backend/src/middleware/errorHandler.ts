@@ -35,7 +35,10 @@ export const errorHandler: ErrorRequestHandler = (err, req, res, _next) => {
     appError = new AppError(500, "INTERNAL_ERROR", "Something went wrong. Please try again.");
   }
 
-  if (appError.statusCode < 500) {
+  if (appError.statusCode >= 500 && err instanceof AppError) {
+    // Expected-but-server-side failures (e.g. unmapped DB errors): log the cause.
+    req.log?.error({ code: appError.code, cause: (err as { cause?: unknown }).cause }, appError.message);
+  } else if (appError.statusCode < 500) {
     req.log?.warn({ code: appError.code, status: appError.statusCode }, appError.message);
   }
 

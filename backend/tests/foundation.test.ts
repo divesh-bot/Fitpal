@@ -3,6 +3,11 @@ import request from "supertest";
 import { buildTestApp } from "./helpers.js";
 import { loadEnv } from "../src/config/env.js";
 
+const SUPABASE = {
+  SUPABASE_URL: "https://x.supabase.co",
+  SUPABASE_PUBLISHABLE_KEY: "sb_publishable_test_key_000000000000",
+};
+
 describe("GET /health", () => {
   it("returns ok in the standard success shape", async () => {
     const res = await request(buildTestApp()).get("/health");
@@ -21,8 +26,8 @@ describe("GET /health", () => {
 });
 
 describe("error handling", () => {
-  it("returns a structured 404 for unknown routes", async () => {
-    const res = await request(buildTestApp()).get("/api/v1/does-not-exist");
+  it("returns a structured 404 for unknown routes outside the API", async () => {
+    const res = await request(buildTestApp()).get("/does-not-exist");
     expect(res.status).toBe(404);
     expect(res.body.error).toMatchObject({ code: "NOT_FOUND" });
     expect(res.body.error.requestId).toBeTypeOf("string");
@@ -71,15 +76,19 @@ describe("rate limiting", () => {
 
 describe("environment validation", () => {
   it("fails fast when CORS origins are missing", () => {
-    expect(() => loadEnv({ NODE_ENV: "test" })).toThrow(/CORS_ALLOWED_ORIGINS/);
+    expect(() => loadEnv({ NODE_ENV: "test", ...SUPABASE })).toThrow(/CORS_ALLOWED_ORIGINS/);
+  });
+
+  it("fails fast when Supabase settings are missing", () => {
+    expect(() => loadEnv({ CORS_ALLOWED_ORIGINS: "http://localhost:3000" })).toThrow(/SUPABASE_URL/);
   });
 
   it("rejects origins that are not http(s) URLs", () => {
-    expect(() => loadEnv({ CORS_ALLOWED_ORIGINS: "javascript:alert(1)" })).toThrow(/CORS_ALLOWED_ORIGINS/);
+    expect(() => loadEnv({ ...SUPABASE, CORS_ALLOWED_ORIGINS: "javascript:alert(1)" })).toThrow(/CORS_ALLOWED_ORIGINS/);
   });
 
   it("parses a comma-separated origin list and applies defaults", () => {
-    const env = loadEnv({ CORS_ALLOWED_ORIGINS: "http://localhost:3000, https://fitpal.example.com" });
+    const env = loadEnv({ ...SUPABASE, CORS_ALLOWED_ORIGINS: "http://localhost:3000, https://fitpal.example.com" });
     expect(env.CORS_ALLOWED_ORIGINS).toEqual(["http://localhost:3000", "https://fitpal.example.com"]);
     expect(env.PORT).toBe(4000);
   });

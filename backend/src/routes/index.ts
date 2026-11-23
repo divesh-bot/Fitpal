@@ -1,11 +1,23 @@
 import { Router } from "express";
+import { requireAuth, type TokenVerifier } from "../middleware/auth.js";
+import { attachRepositories } from "../middleware/repositories.js";
+import type { RepositoriesFactory } from "../repositories/index.js";
+import { accountRouter } from "./account.routes.js";
+
+export interface ApiRouterDeps {
+  verifyToken: TokenVerifier;
+  repositories: RepositoriesFactory;
+}
 
 /**
- * Versioned API router mounted at /api/v1. Feature routers (profile, foods,
- * food-entries, meal-plans, …) are registered here as they are built in
- * Phase 3. Every one of them will sit behind the authentication middleware.
+ * Versioned API router mounted at /api/v1. EVERY route below requires a valid
+ * Supabase access token; repositories are then bound to that verified user.
  */
-export function createApiRouter(): Router {
+export function createApiRouter({ verifyToken, repositories }: ApiRouterDeps): Router {
   const router = Router();
+  router.use(requireAuth(verifyToken), attachRepositories(repositories));
+
+  router.use(accountRouter());
+
   return router;
 }

@@ -38,6 +38,16 @@ const envSchema = z.object({
     .positive()
     .default(15 * 60 * 1000),
   RATE_LIMIT_MAX: z.coerce.number().int().positive().default(300),
+
+  /** Supabase project URL, e.g. https://abcd.supabase.co (no trailing slash). */
+  SUPABASE_URL: z.url({ protocol: /^https?$/ }).transform((u) => u.replace(/\/+$/, "")),
+  /**
+   * Supabase PUBLISHABLE key. Safe to expose; it identifies the project. The API
+   * calls Supabase with this key plus the signed-in user's own access token,
+   * so Row Level Security applies to every query. No secret/service-role key
+   * is needed for normal requests.
+   */
+  SUPABASE_PUBLISHABLE_KEY: z.string().min(20),
 });
 
 export type Env = z.infer<typeof envSchema>;

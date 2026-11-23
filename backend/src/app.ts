@@ -8,18 +8,27 @@ import { getHealth } from "./controllers/health.controller.js";
 import { corsMiddleware, rateLimiter } from "./middleware/security.js";
 import { errorHandler, notFoundHandler } from "./middleware/errorHandler.js";
 import { createApiRouter } from "./routes/index.js";
+import { createSupabaseTokenVerifier, type TokenVerifier } from "./middleware/auth.js";
+import { createSupabaseRepositories, type RepositoriesFactory } from "./repositories/index.js";
+import { createUserDbFactory } from "./config/supabase.js";
 
 export interface AppDependencies {
   env: Env;
   logger: Logger;
+  /** Override in tests; defaults to verifying against Supabase's JWKS. */
+  verifyToken?: TokenVerifier;
+  /** Override in tests; defaults to Supabase-backed repositories. */
+  repositories?: RepositoriesFactory;
 }
 
 /**
  * Builds the Express application without starting a server, so tests can
  * exercise it directly with supertest.
  */
-export function createApp({ env, logger }: AppDependencies): Express {
+export function createApp({ env, logger, verifyToken, repositories }: AppDependencies): Express {
   const app = express();
+  const verify = verifyToken ?? createSupabaseTokenVerifier(env.SUPABASE_URL);
+  const repos = repositories ?? createSupabaseRepositories(createUserDbFactory(env));
 
   app.disable("x-powered-by");
   if (env.TRUST_PROXY_HOPS > 0) app.set("trust proxy", env.TRUST_PROXY_HOPS);
@@ -47,7 +56,7 @@ export function createApp({ env, logger }: AppDependencies): Express {
   // Health check sits outside the rate limiter so uptime probes never get throttled.
   app.get("/health", getHealth);
 
-  app.use("/api/v1", rateLimiter(env), createApiRouter());
+  app.use("/api/v1", rateLimiter(env), createApiRouter({ verifyToken: verify, repositories: repos }));
 
   app.use(notFoundHandler);
   app.use(errorHandler);

@@ -38,9 +38,23 @@ _Last updated: 2026-11-23_
 | Supabase CLI workflow (`npm run db:push:dry` / `db:push`, migrations synced from `database/migrations`) | ✅ | Primary way to apply migrations |
 | Fallback migration runner (connection string, verified TLS) | ✅ 🧪 | Tested against a local PGlite server; not needed while the CLI is used |
 | Apply to Supabase | ✅ 🚀 | 4 migrations + seed applied. Verified live: 20 tables, all with RLS; 42 foods; 4 templates; sign-up trigger present; 0 anon grants; anonymous REST calls to tables and RPCs refused (401); `supabase db advisors`: no issues |
-| Supabase Auth URL configuration | ⬜ | Owner sets Site URL and redirect URLs in the dashboard |
+| Supabase Auth URL configuration | ✅ 🚀 | Site URL http://localhost:3000; redirect http://localhost:3000/** (pushed via CLI after syncing config.toml with production) |
 
-## Phase 3: Backend modules ⬜
+## Phase 3: Backend modules 🟨
+
+| Module | Status | Notes |
+|---|---|---|
+| Auth middleware (Supabase JWT via JWKS, ES256) | ✅ 🧪 | 15 tests: expired, wrong issuer/audience, anon role, attacker key, HS256 forgery, alg none, non-UUID subject, JWKS outage → 503. Live check: forged token rejected with signature failure against the real project keys; token never logged |
+| Per-request Supabase client acting as the user (RLS applies) + repositories scoped by user id | ✅ | Types generated from the live schema (`npm run db:types` in database/) |
+| Profile / targets (versioned) / preferences | ✅ 🧪 | 23 tests incl. cross-user isolation; not yet exercised with a real signed-in user (needs the Phase 4 login screen) |
+| Foods | ⬜ | next |
+| Food entries + daily nutrition | ⬜ | |
+| Recipes | ⬜ | |
+| Meal plans (edit, copy, veg flag, import/export/reset) | ⬜ | |
+| Check-ins + weight progress | ⬜ | |
+| Habits | ⬜ | |
+| Workouts | ⬜ | |
+| Grocery | ⬜ | |
 
 ## Phase 4: Frontend screens ⬜
 
@@ -53,7 +67,9 @@ Pending decision: Render free tier (sleeps after ~15 min idle) or a paid always-
 ## Known issues / notes
 
 - Supabase's built-in email sender has a very low hourly limit and is meant for testing only. Before other people use the app, configure custom SMTP (for example Resend or SES) in Supabase Auth.
-- Migration tests run on PostgreSQL 18 (PGlite); Supabase may run an older major version. The SQL avoids version-specific features, but the first real apply is the final confirmation.
+- Migration tests run on PostgreSQL 18 (PGlite); Supabase runs 17. The migrations applied cleanly to 17.
+- Supabase project region is Tokyo (ap-northeast-1), not Mumbai. It works; latency from India is slightly higher.
 
 - VS Code terminals opened before the Node install won't find `node` until VS Code is restarted.
-- npm 11 blocks dependency install scripts by default; esbuild's postinstall was skipped. The tools work because esbuild's platform binary installs as a normal package.
+- npm 11 blocks dependency install scripts by default. esbuild's postinstall is explicitly denied in backend/package.json (allowScripts); not needed because its platform binary installs as a normal package.
+- In PowerShell, use `npm.cmd` / `npx.cmd` (or run `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned` once) because script execution is disabled on this machine.

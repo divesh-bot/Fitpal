@@ -10,7 +10,8 @@
     "db:status": "npm run db:sync && npx --yes supabase@3.2.0 --workdir . migration list --remote",
     "db:push:dry": "npm run db:sync && npx --yes supabase@3.2.0 --workdir . db push --remote --include-seed --dry-run",
     "db:push": "npm run db:sync && npx --yes supabase@3.2.0 --workdir . db push --remote --include-seed",
-    "db:advisors": "npx --yes supabase@3.2.0 --workdir . db advisors --remote"
+    "db:advisors": "npx --yes supabase@3.2.0 --workdir . db advisors --remote",
+    "db:types": "npx --yes supabase@3.2.0 --workdir . gen types --remote --schema public > ../backend/src/types/database.types.ts"
   },
   "type": "module",
   "private": true,
