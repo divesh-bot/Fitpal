@@ -24,6 +24,8 @@ export interface FoodsRepository {
   update(id: string, values: Partial<FoodWrite>): Promise<FoodRow | null>;
   /** Deletes an OWN food; returns false if no own food has that id. */
   delete(id: string): Promise<boolean>;
+  /** Visible foods with these ids (missing/invisible ids are simply absent). */
+  getMany(ids: readonly string[]): Promise<FoodRow[]>;
 }
 
 /** Escapes LIKE wildcards so user input is matched literally. */
@@ -44,6 +46,11 @@ export class SupabaseFoodsRepository implements FoodsRepository {
     let query = this.visible();
     if (q) query = query.ilike("name", `%${escapeLike(q)}%`);
     return unwrap(await query.order("name", { ascending: true }).range(offset, offset + limit - 1));
+  }
+
+  async getMany(ids: readonly string[]) {
+    if (ids.length === 0) return [];
+    return unwrap(await this.visible().in("id", [...new Set(ids)]));
   }
 
   async get(id: string) {

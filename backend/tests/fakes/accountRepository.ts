@@ -9,6 +9,8 @@ import type {
 } from "../../src/repositories/account.repository.js";
 import type { RepositoriesFactory } from "../../src/repositories/index.js";
 import type { FoodRow, FoodSearch, FoodsRepository, FoodWrite } from "../../src/repositories/foods.repository.js";
+import type { RecipeWithIngredients } from "../../src/repositories/recipes.repository.js";
+import { FakeRecipesRepository } from "./recipes.js";
 import { AppError } from "../../src/utils/AppError.js";
 
 /** In-memory stand-in for the database, keyed by user id (mirrors RLS scoping). */
@@ -18,6 +20,7 @@ export class FakeStore {
   preferences = new Map<string, PreferencesRow>();
   /** All food rows (shared ones have user_id null), like the food_items table. */
   foods: FoodRow[] = [];
+  recipes: RecipeWithIngredients[] = [];
 
   /** Adds a shared reference food (as the seed does). */
   seedSharedFood(values: Partial<FoodRow> & Pick<FoodRow, "name">): FoodRow {
@@ -93,6 +96,7 @@ export class FakeStore {
     return ({ userId }) => ({
       account: new FakeAccountRepository(this, userId),
       foods: new FakeFoodsRepository(this, userId),
+      recipes: new FakeRecipesRepository(this, userId),
     });
   }
 }
@@ -115,6 +119,9 @@ class FakeFoodsRepository implements FoodsRepository {
   }
   async get(id: string) {
     return this.visible().find((f) => f.id === id) ?? null;
+  }
+  async getMany(ids: readonly string[]) {
+    return this.visible().filter((f) => ids.includes(f.id));
   }
   async create(values: FoodWrite) {
     if (this.visible().some((f) => f.user_id === this.userId && f.name.toLowerCase() === values.name.toLowerCase())) {

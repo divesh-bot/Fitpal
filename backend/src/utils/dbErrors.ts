@@ -33,6 +33,12 @@ export function mapDbError(err: DbError): AppError {
     case "22007":
     case "22008":
       return AppError.badRequest("Invalid value supplied.");
+    case "23502":
+      return AppError.validation([{ path: "", message: "A required value is missing." }]);
+    case "P0002": // raised by our functions: "Recipe not found", "No active meal plan", …
+      return AppError.notFound(/not found|no active/i.test(err.message) ? err.message : undefined);
+    case "28000":
+      return AppError.unauthorized();
     case "42501":
       return AppError.forbidden();
     case "PGRST116":

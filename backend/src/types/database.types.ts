@@ -934,8 +934,33 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      copy_my_plan_meal: {
+        Args: { p_from_weekday: number; p_slot: string; p_to_weekdays: number[] }
+        Returns: number
+      }
+      generate_my_grocery_list: {
+        Args: { p_items: Json; p_name: string }
+        Returns: string
+      }
       replace_my_meal_plan: { Args: { p_payload: Json }; Returns: string }
+      reset_my_day: { Args: { p_date: string }; Returns: undefined }
       reset_my_meal_plan: { Args: never; Returns: string }
+      save_my_plan_meal: {
+        Args: { p_meal: Json; p_slot: string; p_weekday: number }
+        Returns: string
+      }
+      save_my_recipe: {
+        Args: { p_recipe: Json; p_recipe_id: string | null }
+        Returns: string
+      }
+      save_my_workout: {
+        Args: { p_session_id: string | null; p_workout: Json }
+        Returns: string
+      }
+      set_my_snack: {
+        Args: { p_date: string; p_entry: Json | null; p_kind: string }
+        Returns: string
+      }
     }
     Enums: {
       [_ in never]: never
