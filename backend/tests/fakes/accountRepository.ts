@@ -8,6 +8,7 @@ import type {
   TargetsWrite,
 } from "../../src/repositories/account.repository.js";
 import type { RepositoriesFactory } from "../../src/repositories/index.js";
+import type { FoodRow, FoodSearch, FoodsRepository, FoodWrite } from "../../src/repositories/foods.repository.js";
 import { AppError } from "../../src/utils/AppError.js";
 
 /** In-memory stand-in for the database, keyed by user id (mirrors RLS scoping). */
@@ -15,6 +16,33 @@ export class FakeStore {
   profiles = new Map<string, ProfileRow>();
   targets = new Map<string, TargetsRow[]>();
   preferences = new Map<string, PreferencesRow>();
+  /** All food rows (shared ones have user_id null), like the food_items table. */
+  foods: FoodRow[] = [];
+
+  /** Adds a shared reference food (as the seed does). */
+  seedSharedFood(values: Partial<FoodRow> & Pick<FoodRow, "name">): FoodRow {
+    const now = new Date().toISOString();
+    const row: FoodRow = {
+      id: crypto.randomUUID(),
+      user_id: null,
+      seed_key: null,
+      brand: null,
+      basis: "per_100g",
+      unit_label: "g",
+      default_amount: 100,
+      kcal: 100,
+      protein_g: 10,
+      carbs_g: null,
+      fat_g: null,
+      diet_type: "veg",
+      notes: null,
+      created_at: now,
+      updated_at: now,
+      ...values,
+    };
+    this.foods.push(row);
+    return row;
+  }
 
   /** Mimics the sign-up trigger. */
   seedUser(userId: string, displayName: string | null = null) {
@@ -62,7 +90,49 @@ export class FakeStore {
   }
 
   factory(): RepositoriesFactory {
-    return ({ userId }) => ({ account: new FakeAccountRepository(this, userId) });
+    return ({ userId }) => ({
+      account: new FakeAccountRepository(this, userId),
+      foods: new FakeFoodsRepository(this, userId),
+    });
+  }
+}
+
+/** Mirrors SupabaseFoodsRepository + RLS: sees shared + own; writes own only. */
+class FakeFoodsRepository implements FoodsRepository {
+  constructor(
+    private s: FakeStore,
+    private userId: string,
+  ) {}
+  private visible() {
+    return this.s.foods.filter((f) => f.user_id === null || f.user_id === this.userId);
+  }
+  async search({ q, limit, offset }: FoodSearch) {
+    const needle = q?.toLowerCase();
+    return this.visible()
+      .filter((f) => !needle || f.name.toLowerCase().includes(needle))
+      .sort((a, b) => a.name.localeCompare(b.name))
+      .slice(offset, offset + limit);
+  }
+  async get(id: string) {
+    return this.visible().find((f) => f.id === id) ?? null;
+  }
+  async create(values: FoodWrite) {
+    if (this.visible().some((f) => f.user_id === this.userId && f.name.toLowerCase() === values.name.toLowerCase())) {
+      throw AppError.conflict("This record already exists.");
+    }
+    return this.s.seedSharedFood({ ...(values as Partial<FoodRow>), name: values.name, user_id: this.userId });
+  }
+  async update(id: string, values: Partial<FoodWrite>) {
+    const row = this.s.foods.find((f) => f.id === id && f.user_id === this.userId);
+    if (!row) return null;
+    Object.assign(row, defined(values), { updated_at: new Date().toISOString() });
+    return { ...row };
+  }
+  async delete(id: string) {
+    const i = this.s.foods.findIndex((f) => f.id === id && f.user_id === this.userId);
+    if (i < 0) return false;
+    this.s.foods.splice(i, 1);
+    return true;
   }
 }
 

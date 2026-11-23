@@ -50,6 +50,22 @@ The API verifies the token's ES256 signature against the project's public keys (
 | `GET /api/v1/preferences` | | `PreferencesDto` |
 | `PUT /api/v1/preferences` | Any of `wholeEggsOnly`, `excludedFoods` (lower-cased, de-duplicated, ≤ 50), `foodPreferences`, `uiSettings` (flat object of string/number/boolean/null, ≤ 30 keys) | `PreferencesDto` |
 
+### Foods
+
+Shared reference foods (the 42 seeded ones; read-only) plus the user's own custom foods. Another user's custom food behaves as if it doesn't exist (404).
+
+| Method & path | Body / query | Returns |
+|---|---|---|
+| `GET /api/v1/foods` | `q?` (≤ 60 chars, case-insensitive, `%`/`_` matched literally), `limit?` (1–100, default 50), `offset?` | `FoodDto[]` sorted by name |
+| `GET /api/v1/foods/:id` | | `FoodDto` |
+| `POST /api/v1/foods` | `{ name, brand?, basis (per_100g / per_100ml / per_unit), unitLabel, defaultAmount, kcal, proteinG, carbsG?, fatG?, dietType? (veg / egg / non_veg), notes? }`. Unit label is forced to `g`/`ml` for per-100 bases. Per-100 protein + carbs + fat ≤ 100 g | `201 FoodDto` (`409` on a duplicate name) |
+| `PUT /api/v1/foods/:id` | Any subset of the create fields | `FoodDto` (`403` for shared foods) |
+| `DELETE /api/v1/foods/:id` | | `204` (`403` for shared foods) |
+
+`FoodDto`: `{ id, name, brand, basis, unitLabel, defaultAmount, per: { kcal, proteinG, carbsG|null, fatG|null }, dietType, notes, isShared, isExcluded }`. `per` is per 100 g, per 100 ml or per 1 unit depending on `basis`. `isExcluded` = the name matches the user's excluded foods (e.g. tofu).
+
+**Nutrition maths** (`services/nutritionMath.ts`, shared by all modules): amount × per-basis value. kcal rounded to whole numbers, macros to 1 decimal (same as the prototype). Unknown carbs/fat stay `null`, and totals report whether they are complete.
+
 ### Common errors
 
 | Status | code | When |

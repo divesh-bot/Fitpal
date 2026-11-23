@@ -3,6 +3,7 @@ import { requireAuth, type TokenVerifier } from "../middleware/auth.js";
 import { attachRepositories } from "../middleware/repositories.js";
 import type { RepositoriesFactory } from "../repositories/index.js";
 import { accountRouter } from "./account.routes.js";
+import { foodsRouter } from "./foods.routes.js";
 
 export interface ApiRouterDeps {
   verifyToken: TokenVerifier;
@@ -18,6 +19,7 @@ export function createApiRouter({ verifyToken, repositories }: ApiRouterDeps): R
   router.use(requireAuth(verifyToken), attachRepositories(repositories));
 
   router.use(accountRouter());
+  router.use(foodsRouter());
 
   return router;
 }

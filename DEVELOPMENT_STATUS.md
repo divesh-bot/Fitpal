@@ -47,8 +47,10 @@ _Last updated: 2026-11-23_
 | Auth middleware (Supabase JWT via JWKS, ES256) | ✅ 🧪 | 15 tests: expired, wrong issuer/audience, anon role, attacker key, HS256 forgery, alg none, non-UUID subject, JWKS outage → 503. Live check: forged token rejected with signature failure against the real project keys; token never logged |
 | Per-request Supabase client acting as the user (RLS applies) + repositories scoped by user id | ✅ | Types generated from the live schema (`npm run db:types` in database/) |
 | Profile / targets (versioned) / preferences | ✅ 🧪 | 23 tests incl. cross-user isolation; not yet exercised with a real signed-in user (needs the Phase 4 login screen) |
-| Foods | ⬜ | next |
-| Food entries + daily nutrition | ⬜ | |
+| Nutrition maths (shared calculation functions) | ✅ 🧪 | 13 tests reproduce prototype values (paneer 150 g = 210 kcal, 2 eggs = 144, CD milk 450 ml = 293 kcal / 25 g); unknown carbs/fat never counted as 0 |
+| Foods (search, custom CRUD, shared read-only, tofu flag) | ✅ 🧪 | 19 route tests incl. cross-user 404s and validation; real Supabase queries not yet run with a signed-in user |
+| ⚠️ Live end-to-end with a real user | ⬜ | Needs the Phase 4 sign-up screen (email confirmation is required) |
+| Food entries + daily nutrition | ⬜ | next |
 | Recipes | ⬜ | |
 | Meal plans (edit, copy, veg flag, import/export/reset) | ⬜ | |
 | Check-ins + weight progress | ⬜ | |
