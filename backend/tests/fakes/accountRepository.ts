@@ -12,6 +12,8 @@ import type { FoodRow, FoodSearch, FoodsRepository, FoodWrite } from "../../src/
 import type { RecipeWithIngredients } from "../../src/repositories/recipes.repository.js";
 import { FakeRecipesRepository } from "./recipes.js";
 import { FakeMealPlansRepository } from "./mealPlans.js";
+import { FakeCheckinsRepository, FakeHabitsRepository } from "./tracking.js";
+import type { CheckinRow, HabitLogRow, HabitRow } from "../../src/repositories/tracking.repository.js";
 import type { PlanRow } from "../../src/repositories/mealPlans.repository.js";
 import { AppError } from "../../src/utils/AppError.js";
 
@@ -25,6 +27,9 @@ export class FakeStore {
   recipes: RecipeWithIngredients[] = [];
   /** Active meal plan per user. */
   plans = new Map<string, PlanRow>();
+  checkins: CheckinRow[] = [];
+  habits: HabitRow[] = [];
+  habitLogs: HabitLogRow[] = [];
   /** What reset_my_meal_plan restores (v1 plan file). */
   defaultPlan: unknown = { version: 1, name: "Default", days: [] };
 
@@ -56,6 +61,22 @@ export class FakeStore {
   /** Mimics the sign-up trigger. */
   seedUser(userId: string, displayName: string | null = null) {
     const now = new Date().toISOString();
+    for (const [position, key, name] of [
+      [1, "creatine", "Creatine"],
+      [2, "workout", "Workout done"],
+    ] as const) {
+      this.habits.push({
+        id: crypto.randomUUID(),
+        user_id: userId,
+        key,
+        name,
+        description: null,
+        position,
+        is_active: true,
+        created_at: now,
+        updated_at: now,
+      });
+    }
     this.profiles.set(userId, {
       id: userId,
       display_name: displayName,
@@ -104,6 +125,8 @@ export class FakeStore {
       foods: new FakeFoodsRepository(this, userId),
       recipes: new FakeRecipesRepository(this, userId),
       mealPlans: new FakeMealPlansRepository(this, userId),
+      checkins: new FakeCheckinsRepository(this, userId),
+      habits: new FakeHabitsRepository(this, userId),
     });
   }
 }
