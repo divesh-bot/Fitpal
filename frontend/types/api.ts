@@ -78,10 +78,15 @@ export interface Ingredient extends Macros {
   dietType: DietType;
 }
 
-/** Ingredient as sent to the API: food-linked or manual. */
+/**
+ * Ingredient as sent to the API:
+ *  - { foodItemId, amount }: calculated by the server from the food;
+ *  - explicit values: kept exactly (linkedFoodItemId preserves an existing food link).
+ */
 export type IngredientInput =
   | { foodItemId: string; amount: number; name?: string; qtyLabel?: string }
   | {
+      linkedFoodItemId?: string;
       name: string;
       qtyLabel?: string;
       quantity?: number | null;

@@ -60,7 +60,16 @@ _Last updated: 2026-11-23_
 | Grocery (generate from plan, custom items carried over) | ✅ 🧪 | Plan quantities are as eaten (cooked rice) |
 | Totals | | 192 backend tests + 47 database tests passing |
 
-## Phase 4: Frontend screens ⬜
+## Phase 4: Frontend screens 🟨
+
+| Item | Status | Notes |
+|---|---|---|
+| Foundation: Supabase Auth (PKCE) sign-up / sign-in / sign-out / forgot + reset password / email callback; API client; app shell (sidebar + mobile tabs) | ✅ 🧪 | Confirmation and reset links must be opened in the same browser (PKCE); other devices: email still confirmed, then sign in |
+| Today screen: week selector (real dates), rings, steps, habits, planned-meal ticks, inline meal editor (copy/clear), snacks (pick/edit/add/delete), log food from list or manually, reset checkmarks, veg-day toggle | ✅ 🧪 | Playwright against live Supabase: 6/6 (desktop journey, phone layout, auth redirects, wrong password); screenshots reviewed |
+| Calculator | ⬜ | next |
+| Log & Progress (check-ins, weight chart, workouts) | ⬜ | |
+| Grocery | ⬜ | |
+| Plan & Rules (plan management, import/export/reset, profile, targets, preferences) | ⬜ | |
 
 ## Phase 5: Integration and cross-device testing ⬜
 

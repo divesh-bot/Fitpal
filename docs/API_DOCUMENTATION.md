@@ -71,7 +71,7 @@ Shared reference foods (the 42 seeded ones; read-only) plus the user's own custo
 Each ingredient is either:
 
 - **food-linked** `{ foodItemId, amount, name?, qtyLabel? }`. Nutrition is calculated by the server from the food; nutrition values sent by the client are rejected.
-- **manual** `{ name, qtyLabel?, quantity?, unit?, kcal, proteinG, carbsG?, fatG?, dietType? }`
+- **explicit values** `{ linkedFoodItemId?, name, qtyLabel?, quantity?, unit?, kcal, proteinG, carbsG?, fatG?, dietType? }`. Used for manual items and for **existing lines kept unchanged** when a meal is re-saved. `linkedFoodItemId` preserves the food link without recalculating, so stored values (e.g. the plan's 35 kcal tomato base) never change silently. A linked egg/non-veg food still counts as egg/non-veg.
 
 Rules: excluded foods (tofu) → `EXCLUDED_FOOD`. Separated or liquid egg whites → `WHOLE_EGGS_ONLY`. The diet type can only be made *stricter* by the name ("Chicken …" is non-veg even if sent as veg). At most 60 per recipe or meal.
 
