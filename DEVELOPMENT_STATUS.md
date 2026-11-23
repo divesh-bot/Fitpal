@@ -40,7 +40,7 @@ _Last updated: 2026-11-23_
 | Apply to Supabase | ✅ 🚀 | 4 migrations + seed applied. Verified live: 20 tables, all with RLS; 42 foods; 4 templates; sign-up trigger present; 0 anon grants; anonymous REST calls to tables and RPCs refused (401); `supabase db advisors`: no issues |
 | Supabase Auth URL configuration | ✅ 🚀 | Site URL http://localhost:3000; redirect http://localhost:3000/** (pushed via CLI after syncing config.toml with production) |
 
-## Phase 3: Backend modules ✅ 🧪 (code complete; live end-to-end pending)
+## Phase 3: Backend ✅ 🧪 (complete; verified end-to-end against live Supabase on 2026-11-23)
 
 | Module | Status | Notes |
 |---|---|---|
@@ -49,8 +49,8 @@ _Last updated: 2026-11-23_
 | Profile / targets (versioned) / preferences | ✅ 🧪 | 23 tests incl. cross-user isolation; not yet exercised with a real signed-in user (needs the Phase 4 login screen) |
 | Nutrition maths (shared calculation functions) | ✅ 🧪 | 13 tests reproduce prototype values (paneer 150 g = 210 kcal, 2 eggs = 144, CD milk 450 ml = 293 kcal / 25 g); unknown carbs/fat never counted as 0 |
 | Foods (search, custom CRUD, shared read-only, tofu flag) | ✅ 🧪 | 19 route tests incl. cross-user 404s and validation; real Supabase queries not yet run with a signed-in user |
-| ⚠️ Live end-to-end with a real user | ⬜ | Needs the Phase 4 sign-up screen (email confirmation is required) |
-| Migration 0005: atomic write functions (recipes, plan meals, copy, snacks, reset day, workouts, grocery) | ✅ 🧪 | 17 PGlite tests; **not yet applied to Supabase** |
+| Live end-to-end (`backend/scripts/live-e2e.mjs`) | ✅ 🧪 | 28/28 checks against real Supabase Auth + DB through the running API: sign-up setup, Today summary with prototype values, ticks/snacks/food log, idempotency, strict-veg/tofu rules in the live DB, recipes/plan/workout/grocery writes, export→import, cross-user isolation (API and direct RLS), reset. Two temporary users created with the secret key (passed via env only), then deleted; 0 rows and 0 users left behind; 0 server errors |
+| Migration 0005: atomic write functions (recipes, plan meals, copy, snacks, reset day, workouts, grocery) | ✅ 🧪 🚀 | 17 PGlite tests; applied to Supabase; advisors: no issues |
 | Recipes + shared ingredient rules (tofu, egg whites, stricter diet type) | ✅ 🧪 | |
 | Meal plans (view, edit, copy, veg flag, import v1 + prototype v2, export, reset) | ✅ 🧪 | |
 | Check-ins + weight progress (calendar 7-day average) | ✅ 🧪 | Deliberate change from the prototype's last-7-entries average |

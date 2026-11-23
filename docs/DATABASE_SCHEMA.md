@@ -1,6 +1,6 @@
 # Database Schema
 
-> **Status:** migrations written and tested locally (30 tests, PGlite / PostgreSQL 18). **Not yet applied to Supabase.**
+> **Status:** migrations 0001–0005 applied to Supabase (Postgres 17) and tested locally (47 PGlite tests) and live (28-check end-to-end run).
 > Source of truth: [database/migrations/](../database/migrations/).
 
 ## Migrations
@@ -11,7 +11,7 @@
 | `0002_business_rules.sql` | Strict-veg day rule; ownership checks on references |
 | `0003_row_level_security.sql` | RLS policies and grants |
 | `0004_account_setup.sql` | Sign-up setup trigger; plan import/reset functions |
-| `0005_write_functions.sql` | Atomic multi-row writes used by the API: `save_my_recipe`, `save_my_plan_meal`, `copy_my_plan_meal`, `set_my_snack`, `reset_my_day`, `save_my_workout`, `generate_my_grocery_list` (all SECURITY INVOKER; **not yet applied to Supabase**) |
+| `0005_write_functions.sql` | Atomic multi-row writes used by the API: `save_my_recipe`, `save_my_plan_meal`, `copy_my_plan_meal`, `set_my_snack`, `reset_my_day`, `save_my_workout`, `generate_my_grocery_list` (all SECURITY INVOKER; applied) |
 | `seed/0001_reference_data.sql` | 42 shared foods + default plan/snacks/groceries/targets/preferences templates (generated from the prototype) |
 
 ## Tables and relationships

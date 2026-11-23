@@ -935,7 +935,11 @@ export type Database = {
     }
     Functions: {
       copy_my_plan_meal: {
-        Args: { p_from_weekday: number; p_slot: string; p_to_weekdays: number[] }
+        Args: {
+          p_from_weekday: number
+          p_slot: string
+          p_to_weekdays: number[]
+        }
         Returns: number
       }
       generate_my_grocery_list: {
@@ -950,15 +954,15 @@ export type Database = {
         Returns: string
       }
       save_my_recipe: {
-        Args: { p_recipe: Json; p_recipe_id: string | null }
+        Args: { p_recipe: Json; p_recipe_id: string }
         Returns: string
       }
       save_my_workout: {
-        Args: { p_session_id: string | null; p_workout: Json }
+        Args: { p_session_id: string; p_workout: Json }
         Returns: string
       }
       set_my_snack: {
-        Args: { p_date: string; p_entry: Json | null; p_kind: string }
+        Args: { p_date: string; p_entry: Json; p_kind: string }
         Returns: string
       }
     }

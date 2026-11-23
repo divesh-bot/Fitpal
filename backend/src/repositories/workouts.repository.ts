@@ -81,7 +81,8 @@ export class SupabaseWorkoutsRepository implements WorkoutsRepository {
   }
 
   async save(id: string | null, workout: WorkoutSave) {
-    return unwrap(await this.db.rpc("save_my_workout", { p_session_id: id, p_workout: workout as never }));
+    // NULL id = create. Generated types cannot express nullable SQL arguments, hence the cast.
+    return unwrap(await this.db.rpc("save_my_workout", { p_session_id: id as string, p_workout: workout as never }));
   }
 
   async delete(id: string) {

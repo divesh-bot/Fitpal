@@ -59,7 +59,8 @@ export class SupabaseRecipesRepository implements RecipesRepository {
   }
 
   async save(id: string | null, recipe: RecipeSave) {
-    return unwrap(await this.db.rpc("save_my_recipe", { p_recipe_id: id, p_recipe: recipe as never }));
+    // NULL id = create. Generated types cannot express nullable SQL arguments, hence the cast.
+    return unwrap(await this.db.rpc("save_my_recipe", { p_recipe_id: id as string, p_recipe: recipe as never }));
   }
 
   async delete(id: string) {

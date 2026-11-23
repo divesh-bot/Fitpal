@@ -61,4 +61,4 @@ Supabase: PostgreSQL (Row Level Security) + Supabase Auth
 - [x] Zod validation on every endpoint (strict: unknown fields rejected)
 - [x] Row Level Security on every user table (verified live + Supabase advisors)
 - [x] Cross-user access tests (API with test doubles; database in PGlite)
-- [ ] Live end-to-end tests against Supabase with real signed-in users
+- [x] Live end-to-end tests against Supabase with real signed-in users (`backend/scripts/live-e2e.mjs`)
