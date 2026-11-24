@@ -140,3 +140,10 @@ export function useProgression(exercise: string) {
     enabled: exercise.trim().length > 0,
   });
 }
+
+export function useTargetsHistory() {
+  return useQuery({
+    queryKey: [...qk.allTargets, "history"],
+    queryFn: ({ signal }) => api<Targets[]>("GET", "/targets/history", undefined, signal),
+  });
+}

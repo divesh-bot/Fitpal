@@ -60,7 +60,7 @@ _Last updated: 2026-11-23_
 | Grocery (generate from plan, custom items carried over) | ✅ 🧪 | Plan quantities are as eaten (cooked rice) |
 | Totals | | 192 backend tests + 47 database tests passing |
 
-## Phase 4: Frontend screens 🟨
+## Phase 4: Frontend screens ✅ 🧪 (all prototype screens rebuilt; 2026-11-24)
 
 | Item | Status | Notes |
 |---|---|---|
@@ -69,9 +69,13 @@ _Last updated: 2026-11-23_
 | Calculator: food lookup with live macros, meal builder (save as recipe / into a plan slot for one or all days / as a snack option; log to today), My Recipes (log, edit, delete), BMR & TDEE with goal presets and protein g/kg, apply targets from today (optionally saving profile) | ✅ 🧪 | Same formulas as the prototype (9 unit tests). Note: the plan text says BMR ~1,901, but Mifflin–St Jeor for 98 kg / 173 cm / 27 y gives 1,931 (TDEE 2,588); stored targets were not changed. Playwright: 8/8 incl. 2 calculator journeys |
 | Log & Progress: daily check-in (weight, waist, steps, sleep, hunger, energy, notes; edit by date), weight chart with 7-day average (30 d / 90 d / 1 y, hover tooltip, keyboard, screen-reader table), pace and waist tiles, check-in history (edit/delete); PPL workout logger with per-set reps/kg/warm-up, last-session hint, exercise autocomplete, history (edit/delete), strength progression chart + table; saving a workout ticks "Workout done" | ✅ 🧪 | Chart colours validated with the dataviz checker (slate-600 vs emerald: contrast ≥ 3:1, CVD ΔE 16.7). Fixed a race where a fast save skipped the workout tick. Playwright: 11/11 |
 | Grocery: shopping progress, tick bought, inline edit, add custom item, confirmed delete, uncheck all, generate from the meal plan (weekly totals per food; unbought custom items kept) | ✅ 🧪 | Verified totals (oats 280 g, protein milk 3.15 L, eggs 5, chicken 300 g, soya 285 g). Playwright grocery journey passing |
-| Plan & Rules | ⬜ | next |
+| Plan & Rules: week management (export v1, import FitPal v1 or prototype v2 with confirmation, reset), full weekly plan with per-day strict-veg toggles and the shared meal editor, profile, active targets (change from a date, history), dietary rules (whole eggs only, excluded foods), habits (add, rename, hide, delete custom), the prototype's rules / supplements / review cards (filled from your settings) | ✅ 🧪 | The rules card waits for data instead of briefly showing a wrong state. Full suite: 14 browser tests (desktop + phone), 9 frontend unit, 195 backend, 47 database, all passing |
 
-## Phase 5: Integration and cross-device testing ⬜
+## Phase 5: Integration and cross-device testing 🟨
+
+- Already verified: every screen talks to the real API and Supabase (Playwright runs against the live project); data survives reloads; sign-out clears cached data.
+- Still to do: a manual two-device check (laptop + phone) with your real account; a dedicated cross-browser session test.
+- Note: the API rate limit (300 requests / 15 min per IP) was exhausted by repeated test runs from this laptop. Fine for one person in normal use; decide the production value at deployment (e.g. 600).
 
 ## Phase 6: Deployment ⬜
 
