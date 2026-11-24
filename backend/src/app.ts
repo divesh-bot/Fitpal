@@ -56,7 +56,7 @@ export function createApp({ env, logger, verifyToken, repositories }: AppDepende
   // Health check sits outside the rate limiter so uptime probes never get throttled.
   app.get("/health", getHealth);
 
-  app.use("/api/v1", rateLimiter(env), createApiRouter({ verifyToken: verify, repositories: repos }));
+  app.use("/api/v1", rateLimiter(env), createApiRouter({ verifyToken: verify, repositories: repos, env }));
 
   app.use(notFoundHandler);
   app.use(errorHandler);

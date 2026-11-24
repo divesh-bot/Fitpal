@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import request from "supertest";
-import { buildTestApp } from "./helpers.js";
+import { buildTestApp, createTestIssuer } from "./helpers.js";
+import { FakeStore } from "./fakes/accountRepository.js";
 import { loadEnv } from "../src/config/env.js";
 
 const SUPABASE = {
@@ -57,13 +58,35 @@ describe("CORS", () => {
 });
 
 describe("rate limiting", () => {
-  it("throttles /api/v1 after the configured limit", async () => {
+  it("throttles anonymous floods per IP at 3× the per-user limit", async () => {
     const app = buildTestApp({ RATE_LIMIT_MAX: "2" });
-    await request(app).get("/api/v1/x");
-    await request(app).get("/api/v1/x");
+    for (let i = 0; i < 6; i++) expect((await request(app).get("/api/v1/x")).status).toBe(401);
     const res = await request(app).get("/api/v1/x");
     expect(res.status).toBe(429);
     expect(res.body.error.code).toBe("RATE_LIMITED");
+  });
+
+  it("limits each signed-in user separately, by verified account (not IP)", async () => {
+    const issuer = await createTestIssuer();
+    const store = new FakeStore();
+    const A = "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa";
+    const B = "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb";
+    store.seedUser(A);
+    store.seedUser(B);
+    const app = buildTestApp(
+      { RATE_LIMIT_MAX: "2" },
+      { verifyToken: issuer.verifyToken, repositories: store.factory() },
+    );
+    const tokenA = await issuer.sign({ sub: A });
+    const tokenB = await issuer.sign({ sub: B });
+    const get = (t: string) => request(app).get("/api/v1/profile").set("Authorization", `Bearer ${t}`);
+
+    expect((await get(tokenA)).status).toBe(200);
+    expect((await get(tokenA)).status).toBe(200);
+    const limited = await get(tokenA);
+    expect(limited.status).toBe(429);
+    // Same IP, different account: unaffected.
+    expect((await get(tokenB)).status).toBe(200);
   });
 
   it("never throttles the health check", async () => {

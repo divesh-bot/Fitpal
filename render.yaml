@@ -23,9 +23,13 @@ services:
         value: production
       - key: LOG_LEVEL
         value: info
-      # Render's load balancer sits in front of the app (verify after first deploy).
+      # Two proxy layers sit in front of the app on Render (edge network +
+      # load balancer). Measured after the first deploy: with 1, the rate
+      # limiter saw rotating proxy IPs instead of the client. Signed-in
+      # requests are additionally limited per account, which does not
+      # depend on this value.
       - key: TRUST_PROXY_HOPS
-        value: "1"
+        value: "2"
       - key: RATE_LIMIT_WINDOW_MS
         value: "900000"
       - key: RATE_LIMIT_MAX
