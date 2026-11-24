@@ -37,7 +37,7 @@ export default function LoginPage() {
       footer={
         <>
           New here?{" "}
-          <Link href="/signup/" className="font-semibold text-emerald-700 hover:underline">
+          <Link prefetch={false} href="/signup/" className="font-semibold text-emerald-700 hover:underline">
             Create an account
           </Link>
         </>
@@ -66,6 +66,7 @@ export default function LoginPage() {
         </Button>
       </form>
       <Link
+        prefetch={false}
         href="/forgot-password/"
         className="block text-center text-xs font-semibold text-slate-500 hover:text-slate-800"
       >

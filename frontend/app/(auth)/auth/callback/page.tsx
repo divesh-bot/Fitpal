@@ -32,7 +32,7 @@ export default function AuthCallbackPage() {
     <AuthCard
       title={linkError ? "Link problem" : "Email confirmed?"}
       footer={
-        <Link href="/login/" className="font-semibold text-emerald-700 hover:underline">
+        <Link prefetch={false} href="/login/" className="font-semibold text-emerald-700 hover:underline">
           Go to sign in
         </Link>
       }

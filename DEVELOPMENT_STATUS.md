@@ -77,9 +77,16 @@ _Last updated: 2026-11-23_
 - Still to do: a manual two-device check (laptop + phone) with your real account; a dedicated cross-browser session test.
 - Note: the API rate limit (300 requests / 15 min per IP) was exhausted by repeated test runs from this laptop. Fine for one person in normal use; decide the production value at deployment (e.g. 600).
 
-## Phase 6: Deployment ⬜
+## Phase 6: Deployment 🟨
 
-Pending decision: Render free tier (sleeps after ~15 min idle) or a paid always-on instance.
+| Item | Status | Notes |
+|---|---|---|
+| Decisions | ✅ | Render **free** plan (Singapore); push to GitHub approved |
+| Render Blueprint (`render.yaml`) | ✅ | Secrets as `sync: false`; rate limit 600 / 15 min |
+| Cloudflare Workers static assets (`frontend/wrangler.jsonc`) + generated `_headers` (strict per-page CSP with script hashes, HSTS, frame-ancestors none, caching) | ✅ 🧪 | Full browser suite (14/14) passed against `wrangler dev` + production-mode API with CSP enforced |
+| Free-plan UX: early wake-up ping + "Waking up the FitPal server…" notice | ✅ | |
+| Accounts (Render, Cloudflare) + first deploy | ⬜ | Owner signs up and connects GitHub; see docs/DEPLOYMENT.md |
+| Production CORS, Supabase Auth URLs, live smoke test, two-device test | ⬜ | After first deploy |
 
 ## Known issues / notes
 

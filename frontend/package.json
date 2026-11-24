@@ -10,7 +10,10 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "test:e2e": "playwright test",
-    "test": "vitest run"
+    "test": "vitest run",
+    "postbuild": "node scripts/generate-headers.mjs",
+    "preview": "wrangler dev --port 8787",
+    "deploy": "wrangler deploy"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.119.2",
@@ -31,9 +34,14 @@
     "prettier-plugin-tailwindcss": "^0.8.1",
     "tailwindcss": "4.3.3",
     "typescript": "^5",
-    "vitest": "^5.1.1"
+    "vitest": "^5.1.1",
+    "wrangler": "^4.167.0"
   },
   "engines": {
     "node": ">=22"
+  },
+  "allowScripts": {
+    "esbuild": false,
+    "workerd": false
   }
 }

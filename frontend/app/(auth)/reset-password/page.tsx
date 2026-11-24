@@ -33,7 +33,7 @@ export default function ResetPasswordPage() {
       <AuthCard
         title="Link expired or invalid"
         footer={
-          <Link href="/forgot-password/" className="font-semibold text-emerald-700 hover:underline">
+          <Link prefetch={false} href="/forgot-password/" className="font-semibold text-emerald-700 hover:underline">
             Request a new link
           </Link>
         }

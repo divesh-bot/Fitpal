@@ -2,7 +2,7 @@
 
 Personal fitness and nutrition tracker: daily calories and protein, a 7-day Indian meal plan, a recipe and macro calculator, weight and check-in progress, PPL workouts, a grocery list and daily habits. Data syncs across devices through a secure backend.
 
-> **Status:** Phase 1 (foundation) is complete. See [DEVELOPMENT_STATUS.md](DEVELOPMENT_STATUS.md) for what is built, what is tested and what is still planned.
+> **Status:** all screens built and tested; deployment configuration ready (Render + Cloudflare). See [DEVELOPMENT_STATUS.md](DEVELOPMENT_STATUS.md).
 
 ## Architecture
 
@@ -21,7 +21,7 @@ Browser ──► Cloudflare (Next.js static frontend)
 | [docs/](docs/) | Architecture, database schema, API and roadmap |
 | [reference/](reference/) | The original HTML prototype (the UI/UX reference) |
 
-Details: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
+Details: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md). Deploying: [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
 
 ## Prerequisites
 

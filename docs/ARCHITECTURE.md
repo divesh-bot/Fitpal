@@ -23,6 +23,7 @@ Supabase: PostgreSQL (Row Level Security) + Supabase Auth
 |---|---|---|
 | 1 | **Frontend is a Next.js static export** (`output: "export"`) | All data comes from the Express API, so the frontend needs no server. Static files are free and fast on Cloudflare and avoid Next.js-on-Workers runtime compatibility issues. Trade-off: no Next.js middleware, server actions or cookies, none of which FitPal needs. Fallback: the `@opennextjs/cloudflare` adapter if server rendering is ever required. |
 | 2 | **Cache Components / PPR are off** | Next.js 16 enables them by default, but they fail the build in export mode ("PPR cannot be enabled in export mode"), and they only help data fetched by a Next.js server. |
+| 2b | **Hosting: Cloudflare Workers static assets; strict CSP generated per page** | Cloudflare's current recommendation for static sites. A post-build script hashes each page's inline Next.js scripts so the CSP needs no `unsafe-inline` for scripts. Link prefetching is disabled (static-export prefetch paths 404 on static hosts). See docs/DEPLOYMENT.md. |
 | 3 | **Avoid dynamic route segments** (`/workouts/[id]`) | A static export can't serve unknown IDs. Use query strings (`/workouts?id=…`) or in-page state instead. |
 | 4 | **Express 5, TypeScript strict, ES modules** | Express 5 forwards errors from async handlers to the error middleware automatically. |
 | 5 | **TypeScript 5.9 in both apps** | TypeScript 7 (the Go-native compiler) exists, but the Next.js and ESLint tooling still targets 5.x. |

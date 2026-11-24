@@ -1,0 +1,14 @@
+{
+  // Cloudflare Workers — static assets only (no Worker code). The Next.js
+  // static export in ./out is served as-is; out/_headers (generated after the
+  // build) sets security and cache headers.
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "fitpal",
+  "compatibility_date": "2026-11-24",
+  "assets": {
+    "directory": "./out",
+    // trailingSlash: true → /today/ serves out/today/index.html
+    "html_handling": "auto-trailing-slash",
+    "not_found_handling": "404-page"
+  }
+}

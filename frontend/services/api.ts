@@ -48,7 +48,45 @@ async function send(method: Method, path: string, body: unknown, token: string |
   }
 }
 
-export async function api<T>(method: Method, path: string, body?: unknown, signal?: AbortSignal): Promise<T> {
+// ---- Slow-request tracking -------------------------------------------------
+// On Render's free plan the API sleeps after 15 idle minutes and takes up to a
+// minute to wake. Requests taking longer than SLOW_MS are counted so the UI
+// can explain the wait instead of looking frozen.
+const SLOW_MS = 4000;
+let slowCount = 0;
+const listeners = new Set<() => void>();
+const emit = () => listeners.forEach((l) => l());
+export const slowRequests = {
+  subscribe(listener: () => void) {
+    listeners.add(listener);
+    return () => listeners.delete(listener);
+  },
+  count: () => slowCount,
+};
+
+async function tracked<T>(work: () => Promise<T>): Promise<T> {
+  let slow = false;
+  const timer = setTimeout(() => {
+    slow = true;
+    slowCount++;
+    emit();
+  }, SLOW_MS);
+  try {
+    return await work();
+  } finally {
+    clearTimeout(timer);
+    if (slow) {
+      slowCount--;
+      emit();
+    }
+  }
+}
+
+export function api<T>(method: Method, path: string, body?: unknown, signal?: AbortSignal): Promise<T> {
+  return tracked(() => request<T>(method, path, body, signal));
+}
+
+async function request<T>(method: Method, path: string, body?: unknown, signal?: AbortSignal): Promise<T> {
   let res = await send(method, path, body, await accessToken(), signal);
   // The token may have expired between checks: refresh once and retry.
   if (res.status === 401) {

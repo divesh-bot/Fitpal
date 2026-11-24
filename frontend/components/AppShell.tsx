@@ -79,6 +79,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         <nav className="flex-1 space-y-1 px-3 py-5" aria-label="Main">
           {NAV.map((n) => (
             <Link
+              prefetch={false}
               key={n.href}
               href={n.href}
               aria-current={active(n.href) ? "page" : undefined}
@@ -161,6 +162,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       >
         {NAV.map((n) => (
           <Link
+            prefetch={false}
             key={n.href}
             href={n.href}
             aria-current={active(n.href) ? "page" : undefined}

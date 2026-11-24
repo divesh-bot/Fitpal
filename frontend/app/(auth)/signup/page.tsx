@@ -47,7 +47,7 @@ export default function SignupPage() {
       <AuthCard
         title="Check your email"
         footer={
-          <Link href="/login/" className="font-semibold text-emerald-700 hover:underline">
+          <Link prefetch={false} href="/login/" className="font-semibold text-emerald-700 hover:underline">
             Back to sign in
           </Link>
         }
@@ -71,7 +71,7 @@ export default function SignupPage() {
       footer={
         <>
           Already have an account?{" "}
-          <Link href="/login/" className="font-semibold text-emerald-700 hover:underline">
+          <Link prefetch={false} href="/login/" className="font-semibold text-emerald-700 hover:underline">
             Sign in
           </Link>
         </>

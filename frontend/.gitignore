@@ -45,3 +45,7 @@ next-env.d.ts
 /test-results/
 /playwright-report/
 /e2e/.auth/
+
+# Cloudflare / wrangler local state
+.wrangler/
+.dev.vars*
